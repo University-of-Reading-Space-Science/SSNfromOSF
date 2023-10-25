@@ -56,7 +56,7 @@ solarmintimes_df = sunspots.LoadSolarMinTimes(sminpath)
 
 #=============================================================================
 #Read in the sunspot data 
-ssn_df = sunspots.LoadSSN(filepath = ssnpath, download_now = False, sminpath = sminpath)
+ssn_df = sunspots.LoadSSN(filepath = ssnpath, download_now = True, sminpath = sminpath)
 
 #create annual SSN record
 ssn_1y = ssn_df.resample('1Y', on='datetime').mean() 
@@ -163,6 +163,13 @@ ssn_1y['source'] =  sunspots.compute_osf_source(ssn_1y['smooth'])
 
 solarmin_mjd = solarmintimes_df['mjd']
 
+
+
+SPE_SSN_phase_lo, SPE_SSN_NORM_AVG_lo, SPE_SSN_NORM_STD_lo = sunspots.ssn_analogue_forecast(ssn_df, 
+                        solarmin_mjd,  nphase = 10, peak_ssn = 140, plotnow = False)
+
+
+
 SPE_SSN_phase, SPE_SSN_NORM_AVG, SPE_SSN_NORM_STD = sunspots.ssn_analogue_forecast(ssn_df, 
                         solarmin_mjd,  nphase = 11*12, peak_ssn = 140, plotnow = True)
 
@@ -188,6 +195,13 @@ ssn = osfG.loc[mask,'Rsilso'].to_numpy()
 SPE_phase, SPE_LOSS_AVG, SPE_LOSS_STD, SPE_LOSS  = sunspots.compute_osfloss_SPE(mjd, osf, ssn, 
                        solarmin_mjd = solarmin_mjd, nphase = 11, plotnow = True)
 
+SPE_phase_lo, SPE_LOSS_AVG_lo, SPE_LOSS_STD_lo, SPE_LOSS_lo  = sunspots.compute_osfloss_SPE(mjd, osf, ssn, 
+                       solarmin_mjd = solarmin_mjd, nphase = 10, plotnow = True)
+
+
+#print out the data
+for i in range(0, len(SPE_SSN_phase_lo)):
+    print(str(SPE_phase_lo[i]/(2*np.pi)) + ' ' + str(SPE_SSN_NORM_AVG_lo[i]) + ' ' + str(SPE_LOSS_AVG_lo[i]))
 
 # <codecell> Compute OSF using SPE loss term
 
